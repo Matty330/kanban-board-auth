@@ -1,12 +1,15 @@
-import { Router } from 'express';
-import authRoutes from './auth-routes.js';
-import apiRoutes from './api/index.js';
-import { authenticateToken } from '../middleware/auth.js';
+import express from 'express';
+import authenticateToken from '../middleware/auth';  // Corrected import for default export
+const router = express.Router();
 
-const router = Router();
-
-router.use('/auth', authRoutes);
-// TODO: Add authentication to the API routes
-router.use('/api', apiRoutes);
+// Protect routes with JWT
+router.get('/tasks', authenticateToken, async (req: any, res: any) => {
+  try {
+    const tasks = await Task.findAll();  // Example logic to fetch tasks from the database
+    res.status(200).send({ tasks });
+  } catch (error) {
+    res.status(500).send({ error: 'Could not fetch tasks.' });
+  }
+});
 
 export default router;

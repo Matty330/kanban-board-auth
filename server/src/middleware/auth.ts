@@ -8,12 +8,11 @@ const authenticateToken = (req: any, res: any, next: any) => {
   }
 
   try {
-    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    req.user = decoded;  // Attach the decoded user info to the request object
-    next();  // Call the next handler
+    req.user = decoded;  // Attach decoded user info to the request object
+    next();
   } catch (error) {
-    res.status(400).send({ error: 'Invalid token.' });
+    return res.status(400).send({ error: 'Invalid token.' });
   }
 };
 

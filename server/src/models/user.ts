@@ -17,43 +17,11 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  // Hash the password before saving the user
-  public async setPassword(password: string) {
-    const saltRounds = 10;
-    this.password = await bcrypt.hash(password, saltRounds);
+  // Association with Ticket
+  static associate(models: any) {
+    User.hasMany(models.Ticket, {
+      foreignKey: 'assignedUserId', // The foreign key in Ticket model
+      as: 'tickets', // Alias for the association
+    });
   }
-}
-
-export function UserFactory(sequelize: Sequelize): typeof User {
-  User.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-    },
-    {
-      tableName: 'users',
-      sequelize,
-      hooks: {
-        beforeCreate: async (user: User) => {
-          await user.setPassword(user.password);
-        },
-        beforeUpdate: async (user: User) => {
-          await user.setPassword(user.password);
-        },
-      }
-    }
-  );
-
-  return User;
 }

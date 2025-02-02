@@ -1,4 +1,5 @@
-import { User } from '../models/user.js';
+import { User } from '../models/User'; // Use 'User' with capital 'U'
+
 
 export const seedUsers = async () => {
   await User.bulkCreate([

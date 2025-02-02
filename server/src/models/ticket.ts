@@ -1,5 +1,5 @@
 import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
-import { User } from './user';
+import { User } from './User';  // Ensure correct casing for User import
 
 interface TicketAttributes {
   id: number;
@@ -16,45 +16,16 @@ export class Ticket extends Model<TicketAttributes, TicketCreationAttributes> im
   public name!: string;
   public status!: string;
   public description!: string;
-  public assignedUserId!: number;
-
-  // associated User model
-  public readonly assignedUser?: User;
+  public assignedUserId?: number;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-}
 
-export function TicketFactory(sequelize: Sequelize): typeof Ticket {
-  Ticket.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      status: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      assignedUserId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-    },
-    {
-      tableName: 'tickets',
-      sequelize,
-    }
-  );
-
-  return Ticket;
+  // Association with User
+  static associate(models: any) {
+    Ticket.belongsTo(models.User, {
+      foreignKey: 'assignedUserId',  // Link to the User by assignedUserId
+      as: 'assignedUser',  // Alias for the association
+    });
+  }
 }
